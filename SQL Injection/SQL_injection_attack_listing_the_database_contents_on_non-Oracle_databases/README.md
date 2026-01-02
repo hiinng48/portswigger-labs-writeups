@@ -1,3 +1,5 @@
+Link_to_lab: https://portswigger.net/web-security/sql-injection/examining-the-database/lab-listing-database-contents-non-oracle
+
 okay at first i notice it says retrieve data from non oracle database
 
 im seeing concepts like: rdbms like oracle, mysql, sql server, postgres sql,...; schema/no schema; unique APIS;...

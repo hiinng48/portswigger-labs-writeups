@@ -1,0 +1,25 @@
+Trong lúc làm lab 1 phần os command injection, t có tìm hiểu thêm 1 chút
+1. Nhìn vào một request, ví dụ:
+POST /product/stock HTTP/2
+Host: 0aa4000f03641e7b8136e809006e000a.web-security-academy.net
+Cookie: session=qB9lrTanZvdFpjVUhywizRCrpFPB39Oh
+Content-Length: 21
+Sec-Ch-Ua-Platform: "Windows"
+Accept-Language: en-US,en;q=0.9
+Sec-Ch-Ua: "Chromium";v="143", "Not A(Brand";v="24"
+Content-Type: application/x-www-form-urlencoded
+Sec-Ch-Ua-Mobile: ?0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36
+Accept: */*
+Origin: https://0aa4000f03641e7b8136e809006e000a.web-security-academy.net
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: cors
+Sec-Fetch-Dest: empty
+Referer: https://0aa4000f03641e7b8136e809006e000a.web-security-academy.net/product?productId=1
+Accept-Encoding: gzip, deflate, br
+Priority: u=1, i
+
+productId=1&storeId=1
+
+ta chủ yếu cần quan tâm các mục sau: 
+- Content-Type: application/x-www-form-urlencoded : chưa loại 

